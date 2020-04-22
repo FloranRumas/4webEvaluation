@@ -1,7 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { Navbar } from "react-bootstrap";
-import { Footer } from "react-bootstrap";
 import { NavItem } from "react-bootstrap";
 import { Nav } from "react-bootstrap";
 import { LinkContainer } from "react-router-bootstrap";
@@ -29,9 +28,6 @@ function App() {
           </Nav>
         </Navbar.Collapse>
       </Navbar>
-      <footer>
-
-      </footer>
       <Routes />
     </div>
   );
