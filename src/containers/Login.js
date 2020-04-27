@@ -13,7 +13,7 @@ export default function Login() {
   }
 
   function handleSubmit(event) {
-    if(email == "contact@web.fr" && password == "azerty"){
+    if(email === "contact@web.fr" && password === "azerty"){
       sessionStorage.setItem('connected', 'true');
       history.push("/dashboard");
     }else{

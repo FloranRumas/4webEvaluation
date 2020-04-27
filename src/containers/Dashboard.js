@@ -1,7 +1,6 @@
-import React from "react";
+import React, { useState }  from "react";
 import "./Dashboard.css";
 import { Table } from "react-bootstrap";
-import { useHistory } from "react-router-dom";
 
 class Dashboard extends React.Component {
     constructor(props) {
@@ -11,9 +10,10 @@ class Dashboard extends React.Component {
         isLoaded: false,
         items: [],
         totalPage: 0,
-        pagination: 10,
+        pagination: 5,
         currentPagination: 0,
-        currentIndex: 0
+        currentIndex: 0,
+        myInputValue: ""
       };
     }
 
@@ -22,7 +22,23 @@ class Dashboard extends React.Component {
         currentPagination: prmPagination,
         currentIndex: this.state.pagination * (prmPagination)
       });
-      console.log(this.state.currentIndex);
+    }
+
+    selectEntries(prmPagination){
+      const nbRes = parseInt(prmPagination)
+      this.setState({
+        pagination: nbRes,
+        currentIndex: 0,
+        currentPagination: 0,
+        totalPage: Array.from(Array(Math.round(this.state.items.length / nbRes)).keys())
+      });
+      this.forceUpdate();
+    }
+
+    checkConnexion(connected){
+      if(connected !== 'true') {
+        window.location.href = "/login";
+      }
     }
   
     componentDidMount() {
@@ -47,13 +63,9 @@ class Dashboard extends React.Component {
     }
   
     render() {
-        const { error, isLoaded, items, totalPage, currentIndex, pagination } = this.state;
+        const { error, isLoaded, items, totalPage, currentIndex, pagination, currentPagination} = this.state;
         const connected = sessionStorage.getItem('connected');
-        if(connected !== 'true') {
-          // const history = useHistory();
-          // history.push('/login');
-          alert('tutu');
-        }
+        this.checkConnexion(connected);
         if (error) {
           return <div>Erreur de l'API: {error.message}</div>;
         } else if (!isLoaded) {
@@ -61,6 +73,16 @@ class Dashboard extends React.Component {
         } else {
           return (
             <React.Fragment>
+                <input className="searchInput" id="searchInput" type="text" value={this.state.myInputValue} onChange={e => this.setState({myInputValue: e.target.value})} placeholder="Recherche..."/> 
+                <div className="select__tbl">
+                  <select name="select_tbl" id="select_tbl" onChange={e => this.selectEntries(e.target.value)}>
+                    <option value="5">5 Lignes</option>
+                    <option value="10">10 Lignes</option>
+                    <option value="20">20 Lignes</option>
+                    <option value="50">50 Lignes</option>
+                  </select> 
+
+                </div>         
             <Table striped bordered hover variant="dark" responsive>
                 <thead>
                     <tr>
@@ -72,7 +94,7 @@ class Dashboard extends React.Component {
                     </tr>
                 </thead>
                 <tbody>
-                    {items.slice(currentIndex, pagination + currentIndex).map((item, index) => (
+                    {items.slice(currentIndex, pagination + currentIndex).filter(item => item.Country.includes(this.state.myInputValue.toLocaleLowerCase())).map((item, index) => (
                         <tr key={index}>                   
                             <td>
                                 {item.Country} 
@@ -97,10 +119,14 @@ class Dashboard extends React.Component {
                     ))}
                 </tbody> 
             </Table>
-              {<ul class="pagination">
-                {totalPage.map((value, index) => {
+              {<ul className="pagination">
+              <li> <button onClick={() => {this.updatePagination(0)}}>1</button></li>
+              <li> <button>...</button></li>  
+                {totalPage.slice(currentPagination <=3 ? 0 : currentPagination-2 , currentPagination + 3 ).map((value, index) => {
                   return <li key={index}><button onClick={() => {this.updatePagination(value)}}>{value+1}</button></li>
-                })}                
+                })}
+                <li> <button>...</button></li>   
+                <li> <button onClick={() => {this.updatePagination(totalPage.length-1)}}>{totalPage.length}</button></li>                
               </ul>}
             </React.Fragment>  
           );
