@@ -2,6 +2,8 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 ## Available Scripts
 
+## PROJET PAR FLORAN_RUMAS : L'API PARFOIS BUG IL FAUT REFRESH LA PAGE. 
+
 In the project directory, you can run:
 
 ### `npm start`
